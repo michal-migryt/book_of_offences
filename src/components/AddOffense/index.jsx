@@ -17,23 +17,41 @@ fineAmount: 0,
 const punishmentRef  = React.useRef()
 const sentenceSuffix = React.useRef()
 const [error, setError] = useState("")
+const [success, setSuccess] = useState("")
+const [hideSentenceLen, setHideSentenceLen] = useState(true)
+const [hideFineAmount, setHideFineAmonunt] = useState(false)
 const navigate = useNavigate()
 const handleChange = ({ currentTarget: input }) => {
 setData({ ...data, [input.name]: input.value })
+}
+function ManageBooleans() {
+    if(punishmentRef.current.value !== "Grzywna")
+        setHideSentenceLen(false)
+    else
+        setHideSentenceLen(true)
+    if(punishmentRef.current.value !== "Prace społeczne" && punishmentRef.current.value !== "Więzienie")
+        setHideFineAmonunt(false)
+    else
+        setHideFineAmonunt(true)
 }
 const handleSubmit = async (e) => {
 e.preventDefault()
 
 try {
-    console.log(sentenceSuffix.current.value)
-    const tempP = punishmentRef.current.value
-    setData({...data, ["punishment"]:tempP})
-const temp =  data["sentenceLength"].toString() + sentenceSuffix.current.toString()
-setData({...data, ["sentenceLength"]:temp})
+    const tempSL = !hideSentenceLen ? data["sentenceLength"].toString() + sentenceSuffix.current.value : "";
+    const tempFine = !hideFineAmount ? data["fineAmount"] : 0
+    const dbobj={
+    name:data["name"],
+    punishment: punishmentRef.current.value,
+    sentenceLength: tempSL,
+    fineAmount: tempFine
+}
 const url = "http://localhost:8080/api/offenses"
-const { data: res } = await axios.post(url, data)
+const { data: res } = await axios.post(url, dbobj)
 console.log(res.message)
 // Dodac informacje o pomyślnym dodaniu
+setSuccess(res.message)
+setError("")
 } catch (error) {
 if (
 error.response &&
@@ -41,6 +59,7 @@ error.response.status >= 400 &&
 error.response.status <= 500
 ) {
 setError(error.response.data.message)
+setSuccess("")
 }
 }
 }
@@ -63,28 +82,32 @@ Wyloguj się
 <form className={styles.form_container}
 onSubmit={handleSubmit}>
 <h1>Tworzenie przewinienia</h1>
+<label>
+    Nazwa przewinienia:
 <input
 type="text"
-placeholder="Nazwa przewinienia"
+placeholder="Podaj nazwe przewinienia"
 name="name"
 onChange={handleChange}
 value={data.name}
 required
 className={styles.input}
 />
+</label>
 <label>
-          Wybierz rodzaj kary:
-          </label>
-          <select ref={punishmentRef} className={styles.select} onChange={()=>{}}>
+          Rodzaj kary:
+          <select ref={punishmentRef} className={styles.select} onChange={ManageBooleans}>
             <option value='Grzywna'>Grzywna</option>
             <option value='Prace społeczne'>Prace społeczne</option>
             <option value='Prace społecznie i grzywna'>Prace społeczne i grzywna</option>
             <option value='Więzienie'>Więzienie</option>
-            <option value='Więzienie i grzywa'>Więzienie i grzywna</option>
+            <option value='Więzienie i grzywna'>Więzienie i grzywna</option>
           </select>
-        
-
-<label className={styles.sentenceLength}>
+          </label>
+{
+    !hideSentenceLen ?
+<label className={`styles.sentenceLength`}>
+    Długość wyroku:
 <input
 type="number"
 placeholder="Długość wyroku"
@@ -93,6 +116,7 @@ onChange={handleChange}
 value={data.sentenceLength}
 required
 className={styles.input}
+min={0}
 />
 Jednostka daty:
 <select ref={sentenceSuffix} className={styles.selectSentenceSuffix} onChange={()=>{}}>
@@ -102,20 +126,29 @@ Jednostka daty:
           </select>
 
 </label>
+: null
+}
+{!hideFineAmount ?
+<label>Wielkość grzywny:
 <input
 type="number"
-placeholder="Wielkość grzywny"
 name="fineAmount"
 onChange={handleChange}
 value={data.fineAmount}
 required
+min={0}
 className={styles.input}
 />
+</label>
+: null
+}
 {error && <div
 className={styles.error_msg}>{error}</div>}
+{success && <div
+className={styles.success}>{success}</div>}
 <button type="submit"
 className={styles.green_btn}>
-Zarejestruj się
+Dodaj przewinienie
 </button>
 </form>
 </div>
@@ -123,4 +156,5 @@ Zarejestruj się
 
 );
 };
+
 export default AddOffense

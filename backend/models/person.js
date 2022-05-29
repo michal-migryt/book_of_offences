@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Joi = require("joi");
 const Schema = mongoose.Schema;
 
 const personSchema = new Schema({
@@ -9,18 +10,26 @@ const personSchema = new Schema({
     },
     secondName:{
         type: String,
-        required: false
+        trim: true 
     },
     surname:{
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
-    offenseId:{
-        type: mongoose.Types.ObjectId,
-        ref: "Offense"
+    offense:{
+        type: String,
+        required: true
     }
 }, {timestamps:true})
 
 const Person = mongoose.model("Person", personSchema);
-
-module.exports = Person;
+const validate = (data) =>{
+    const schema = Joi.object({
+        firstName: Joi.string().required().label("First name"),
+        secondName: Joi.string().label("Second name").allow(null, ''),
+        surname: Joi.string().required().label("Surname"),
+        offense: Joi.string().required().label("Offense")
+    })
+}
+module.exports = {Person, validate};

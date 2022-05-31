@@ -19,6 +19,10 @@ router.post("/", async (req, res)=>{
 router.get("/", async (req, res) => {
     await Offense.find().then(offenses => res.json(offenses)).catch(err => res.status(400).json('Błąd: ' + err));
    })
+
+router.get("/names", async(req, res) =>{
+    await Offense.find({}, { _id:0, name:1}).then(offenses => res.json(offenses)).catch(err => res.status(400).json('Błąd: ' + err));
+})
 router.post("/update", async (req, res)=>{
     try{
         const { error } = validate(req.body)
@@ -41,5 +45,8 @@ router.post("/update", async (req, res)=>{
 router.delete("/", async (req, res)=>{
     Offense.findOneAndDelete({name:req.body.name}).then(()=>res.status(203).send({message:"Usunięto przewinienie"}))
     .catch(() => {res.status(500).send({message: "Wewnętrzny błąd serwera"})})
+})
+router.get("/:id", async (req, res) =>{
+    await Offense.findById({_id:req.params.id}).then(offense => res.json(offense)).catch(err => res.status(400).json('Błąd: ' + err));
 })
 module.exports = router

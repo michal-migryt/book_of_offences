@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Joi = require("joi");
 const Schema = mongoose.Schema;
 
-const personSchema = new Schema({
+const entrySchema = new Schema({
     firstName:{
         type: String, 
         required: true,
@@ -23,7 +23,7 @@ const personSchema = new Schema({
     }
 }, {timestamps:true})
 
-const Person = mongoose.model("Person", personSchema);
+const Entry = mongoose.model("Entry", entrySchema);
 const validate = (data) =>{
     const schema = Joi.object({
         firstName: Joi.string().required().label("First name"),
@@ -31,5 +31,6 @@ const validate = (data) =>{
         surname: Joi.string().required().label("Surname"),
         offense: Joi.string().required().label("Offense")
     })
+    return schema.validate(data)
 }
-module.exports = {Person, validate};
+module.exports = {Entry, validate};

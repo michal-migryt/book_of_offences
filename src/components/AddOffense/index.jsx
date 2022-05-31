@@ -1,11 +1,12 @@
-import React, { useState } from "react"
+import { useState, useRef} from "react"
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
 import styles from "./styles.module.css"
 import arrow_back from "../../images/back-button.png"
 const handleLogout = () => {
     localStorage.removeItem("token")
-    window.location.reload()
+    window.location.href = "/"
+    //window.location.reload()
     }
 const AddOffense = () => {
 const [data, setData] = useState({
@@ -14,8 +15,8 @@ punishment: "",
 sentenceLength: 0,
 fineAmount: 0,
 })
-const punishmentRef  = React.useRef()
-const sentenceSuffix = React.useRef()
+const punishmentRef  = useRef()
+const sentenceSuffix = useRef()
 const [error, setError] = useState("")
 const [success, setSuccess] = useState("")
 const [hideSentenceLen, setHideSentenceLen] = useState(true)
@@ -74,6 +75,7 @@ return (
     </Link>
     </button>
     <h1>Kartoteka kryminalno-wykroczeniowa</h1>
+    
 <button className={styles.white_btn} onClick={handleLogout}>
 Wyloguj się
 </button></nav>
@@ -120,9 +122,10 @@ min={0}
 />
 Jednostka daty:
 <select ref={sentenceSuffix} className={styles.selectSentenceSuffix} onChange={()=>{}}>
+            <option value="h">Godziny</option>
             <option value='d'>Dni</option>
             <option value='m'>Miesiące</option>
-            <option value='l'>Lata</option>
+            <option value='y'>Lata</option>
           </select>
 
 </label>

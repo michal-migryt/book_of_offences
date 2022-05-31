@@ -21,6 +21,21 @@ Wyloguj się
     Dodaj przewinienie
 </button>
 </Link>
+<Link to="/showoffenses">
+<button className={styles.green_btn} onClick={handleAddOffense}>
+    Wyświetl listę przewinień
+</button>
+</Link>
+<Link to="/addentry">
+<button className={styles.green_btn} onClick={handleAddOffense}>
+    Dodaj wpis
+</button>
+</Link>
+<Link to="/showentries">
+<button className={styles.green_btn} onClick={handleAddOffense}>
+    Wyświetl listę wpisów
+</button>
+</Link>
 </div>
 )
 }

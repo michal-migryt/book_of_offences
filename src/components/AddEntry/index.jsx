@@ -16,15 +16,16 @@ offense: "",
 })
 const [offensesNames, setOffensesNames] = useState({name:""})
 const [foundNames, setFoundNames] = useState(false)
-const offenseRef = useRef()
+
 if (!foundNames)
 {
 axios.get("http://localhost:8080/api/offenses/names").then((response) =>{
     setOffensesNames(response.data)
     setFoundNames(true)
-    console.log(offensesNames)
+    //console.log(offensesNames)
 })
 }
+
 const [error, setError] = useState("")
 const [success, setSuccess] = useState("")
 const navigate = useNavigate()
@@ -34,10 +35,10 @@ setData({ ...data, [input.name]: input.value })
 const handleSubmit = async (e) => {
 e.preventDefault()
 try {
+    
 const url = "http://localhost:8080/api/entries"
-setData({...data, ["offense"]: offenseRef.current.value })
 const { data: res } = await axios.post(url, data)
-console.log(res.message)
+
 setSuccess(res.message)
 setError("")
 } catch (error) {
@@ -51,11 +52,12 @@ setSuccess("")
 }
 }
 }
+const offenseRef = useRef(offensesNames[0])
 return ( foundNames &&
 <div className={styles.main_container}>
 <nav className={styles.navbar}>
     <button className={styles.back_btn}>
-    <Link to="/">
+    <Link to="/showentries">
         <img className={styles.img} src={arrow_back}>
     </img>
     </Link>
@@ -120,7 +122,7 @@ className={styles.error_msg}>{error}</div>}
 {success && <div
 className={styles.success}>{success}</div>}
 <button type="submit"
-className={styles.green_btn}>
+className={styles.green_btn} onClick={() => {setData({...data, ["offense"]: offenseRef.current.value })}}>
 Dodaj wpis
 </button>
 </form>

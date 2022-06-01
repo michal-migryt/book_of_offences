@@ -15,12 +15,15 @@ const ShowOffenses = () => {
         sentenceLength: "",
         fineAmount: 0
     })
+    const findOffenses = () =>{
     if(!foundOffenses){
         axios.get("http://localhost:8080/api/offenses").then((response) =>{
     setData(response.data)
     setFoundOffenses(true)
 })
     }
+    }
+    findOffenses()
     return(foundOffenses && <div className={styles.main_container}>
         <nav className={styles.navbar}>
             <button className={styles.back_btn}>
@@ -94,12 +97,18 @@ const ShowOffenses = () => {
                         <th>{v["punishment"]}</th>
                         <th>{finalString}</th>
                         <th>{v["fineAmount"] ? v["fineAmount"] : "-"}</th>
-                        <th><Link to={{pathname: "/editoffense/"+v["_id"],state: {id: v["_id"]} // your data array of objects
+                        <th><Link to={{pathname: "/editoffense/"+v["_id"],state: {id: v["_id"]}
   }}><button>Edytuj</button></Link></th>
+  <th><button onClick={()=>{axios.delete("http://localhost:8080/api/offenses/"+ v["_id"]).then(setFoundOffenses(false), findOffenses(), axios.delete("http://localhost:8080/api/entries/deletewithoffense/"+ v["name"]))}}>Usun</button></th>
                     </tr>
                 })
             }
         </table>
+        <Link to="/addoffense">
+<button className={styles.green_btn}>
+    Dodaj przewinienie
+</button>
+</Link>
         </div>);
 };
 export default ShowOffenses

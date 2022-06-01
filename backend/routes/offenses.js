@@ -23,12 +23,12 @@ router.get("/", async (req, res) => {
 router.get("/names", async(req, res) =>{
     await Offense.find({}, { _id:0, name:1}).then(offenses => res.json(offenses)).catch(err => res.status(400).json('Błąd: ' + err));
 })
-router.post("/update", async (req, res)=>{
+router.post("/update/:id", async (req, res)=>{
     try{
         const { error } = validate(req.body)
         if (error)
         return res.status(400).send({message: error.details[0].message})
-        const offense = await Offense.findOne({ name:req.body.name})
+        const offense = await Offense.findOne({ _id:req.params.id})
         if (offense){
         offense.name = req.body.name
         offense.punishment = req.body.punishment
@@ -42,8 +42,9 @@ router.post("/update", async (req, res)=>{
             res.status(500).send({message: "Wewnętrzny błąd serwera"})
         }
 })
-router.delete("/", async (req, res)=>{
-    Offense.findOneAndDelete({name:req.body.name}).then(()=>res.status(203).send({message:"Usunięto przewinienie"}))
+router.delete("/:id", async (req, res)=>{
+    //Offense.findOneAndDelete({name:req.params.name}).then(()=>res.status(203).send({message:"Usunięto przewinienie"}))
+    Offense.findOneAndDelete({_id: req.params.id}).then(()=>res.status(203).send({message:"Usunięto przewinienie"}))
     .catch(() => {res.status(500).send({message: "Wewnętrzny błąd serwera"})})
 })
 router.get("/:id", async (req, res) =>{

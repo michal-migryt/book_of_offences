@@ -69,7 +69,7 @@ return (
     <div className={styles.main_container}>
 <nav className={styles.navbar}>
     <button className={styles.back_btn}>
-    <Link to="/">
+    <Link to="/showoffenses">
         <img className={styles.img} src={arrow_back}>
     </img>
     </Link>

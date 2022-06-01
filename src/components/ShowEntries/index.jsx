@@ -11,12 +11,15 @@ const ShowEntries = () => {
     const [foundEntries, setFoundEntries] = useState(false)
     const [data, setData] = useState({
     })
+    const getEntries = () =>{
     if(!foundEntries){
         axios.get("http://localhost:8080/api/entries").then((response) =>{
     setData(response.data)
     setFoundEntries(true)
-})
+})}
+
     }
+    getEntries()
     return(foundEntries && <div className={styles.main_container}>
         <nav className={styles.navbar}>
             <button className={styles.back_btn}>
@@ -46,12 +49,18 @@ const ShowEntries = () => {
                         <th>{v["secondName"] ? v["secondName"] : "-"}</th>
                         <th>{v["surname"]}</th>
                         <th>{v["offense"]}</th>
-                        <th><Link to={{pathname: "/editentry/"+v["_id"],state: {id: v["_id"]} // your data array of objects
+                        <th><Link to={{pathname: "/editentry/"+v["_id"],state: {id: v["_id"]}
   }}><button>Edytuj</button></Link></th>
+  <th><button onClick={()=>{axios.delete("http://localhost:8080/api/entries/"+ v["_id"]).then(setFoundEntries(false), getEntries())}}>Usun</button></th>
                     </tr>
                 })
             }
         </table>
+        <Link to="/addentry">
+<button className={styles.green_btn}>
+    Dodaj wpis
+</button>
+</Link>
         </div>);
 };
 export default ShowEntries

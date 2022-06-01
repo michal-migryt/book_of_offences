@@ -6,7 +6,6 @@ import arrow_back from "../../images/back-button.png"
 const handleLogout = () => {
     localStorage.removeItem("token")
     window.location.href = "/"
-    //window.location.reload()
     }
 
 const EditOffense = () => {
@@ -14,6 +13,7 @@ const [data, setData] = useState({
 
 })
 const [editData, setEditData] = useState({
+    _id:"",
     name: "",
     punishment:"",
     sentenceLength:"",
@@ -34,6 +34,7 @@ const setupFormularz = ()=>{
     var nazwa = editData["name"], kara = editData["punishment"],
      dlugoscKary = editData["sentenceLength"], wielkoscGrzywny = editData["fineAmount"];
      console.log("Nazwa: " + nazwa)
+     setData({...data, "_id": editData._id})
      setData({ ...data, "name": nazwa})
      punishmentRef.current.value = kara;
      if(dlugoscKary != null && dlugoscKary.length > 0){
@@ -44,31 +45,24 @@ const setupFormularz = ()=>{
      console.log(dlKarytemp)
      setData({ ...data, "sentenceLength": dlKarytemp })
      }
-
      setData({ ...data, "fineAmount": wielkoscGrzywny })
      }
 const getOffense = async () => {
-    //const { temp } = await axios("http://localhost:8080/api/offenses/"+id);
     await axios.get("http://localhost:8080/api/offenses/"+id).then((response) =>{
     setEditData(response.data); setFoundOffense(true);})
-    //await sleep(1000);
-    console.log(editData["name"]);
     setupFormularz();
     ManageBooleans();
-    //const { temp } = await axios("http://localhost:8080/api/offenses/62922316d374a7e4a0b1cc51");
-    //setEditData(temp);
-    
-    //punishmentRef.current.value = "Więzienie"
-    
-    
   };
-
-     
-//const {editData} = location.state
-console.log(id)
-
-
-
+const cancelEdited = async(e) =>{
+    e.preventDefault()
+    await axios.get("http://localhost:8080/api/offenses/"+id).then((response) =>{
+    setEditData(response.data); setFoundOffense(true);})
+    setError("")
+    setSuccess("")
+    setupFormularz();
+    ManageBooleans();
+    
+}
 const handleChange = ({ currentTarget: input }) => {
 setData({ ...data, [input.name]: input.value })
 }
@@ -81,6 +75,7 @@ function ManageBooleans() {
         setHideFineAmonunt(false)
     else
         setHideFineAmonunt(true)
+    
 }
 const handleSubmit = async (e) => {
 e.preventDefault()
@@ -89,12 +84,12 @@ try {
     const tempSL = !hideSentenceLen ? data["sentenceLength"].toString() + sentenceSuffix.current.value : "";
     const tempFine = !hideFineAmount ? data["fineAmount"] : 0
     const dbobj={
-    name:data["name"],
+    name:editData["name"],
     punishment: punishmentRef.current.value,
     sentenceLength: tempSL,
     fineAmount: tempFine
 }
-const url = "http://localhost:8080/api/offenses"
+const url = "http://localhost:8080/api/offenses/update/" + editData._id
 const { data: res } = await axios.post(url, dbobj)
 console.log(res.message)
 // Dodac informacje o pomyślnym dodaniu
@@ -117,7 +112,7 @@ return  ( foundOffense &&
         <div className={styles.main_container}>
     <nav className={styles.navbar}>
         <button className={styles.back_btn}>
-        <Link to="/">
+        <Link to="/showoffenses">
             <img className={styles.img} src={arrow_back}>
         </img>
         </Link>
@@ -197,10 +192,13 @@ return  ( foundOffense &&
     className={styles.error_msg}>{error}</div>}
     {success && <div
     className={styles.success}>{success}</div>}
+    <div>
     <button type="submit"
     className={styles.green_btn}>
     Edytuj przewinienie
     </button>
+    <button type="cancel"className={styles.green_btn} onClick={cancelEdited} > Cofnij zmiany</button>
+    </div>
     </form>
     </div>
     

@@ -56,4 +56,7 @@ router.delete("/:id", async (req, res)=>{
     await Entry.findOneAndDelete({_id: req.params.id}).then(()=>res.status(203).send({message:"Usunięto wpis o podanym id"}))
     .catch(() => {res.status(500).send({message: "Wewnętrzny błąd serwera"})})
 })
+router.delete("/deletewithoffense/:name", async (req, res)=>{
+    await Entry.deleteMany({offense: req.params.name}).then(()=> res.status(205).send({message:"Usunięto wpisy powiązane z " + req.params.name})).catch(() =>{res.status(500).send({message: "Wewnętrzny błąd serwera"})})
+})
 module.exports = router

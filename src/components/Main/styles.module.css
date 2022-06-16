@@ -25,6 +25,12 @@
 	cursor: pointer;
 	margin-right: 20px;
 }
+.menuButtons {
+	align-items: center;
+	display: flex;
+	margin-left: 24%;
+
+}
 .green_btn{
 	border: none;
 	outline: none;

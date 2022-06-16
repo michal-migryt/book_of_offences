@@ -14,6 +14,7 @@ return (
 Wyloguj się
 </button>
 </nav>
+<div className={styles.menuButtons}>
 <Link to="/showoffenses">
 <button className={styles.green_btn}>
     Lista przewinień
@@ -30,6 +31,7 @@ Wyloguj się
     Lista z podziałem
 </button>
 </Link>
+</div>
 </div>
 )
 }

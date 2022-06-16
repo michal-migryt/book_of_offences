@@ -24,7 +24,7 @@ const ShowOffenses = () => {
     }
     }
     findOffenses()
-    return(foundOffenses && <div className={styles.main_container}>
+    return(foundOffenses && <div className={styles.form_container}>
         <nav className={styles.navbar}>
             <button className={styles.back_btn}>
             <Link to="/">
@@ -37,7 +37,7 @@ const ShowOffenses = () => {
         <button className={styles.white_btn} onClick={handleLogout}>
         Wyloguj się
         </button></nav>
-        <table>
+        <table className={styles.table}>
             <thead>
                 <tr>
                     <th>Nazwa</th>

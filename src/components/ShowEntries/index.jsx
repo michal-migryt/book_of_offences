@@ -19,8 +19,9 @@ const ShowEntries = () => {
 })}
 
     }
+        
     getEntries()
-    return(foundEntries && <div className={styles.main_container}>
+    return(foundEntries && <div className={styles.form_container}>
         <nav className={styles.navbar}>
             <button className={styles.back_btn}>
             <Link to="/">
@@ -33,13 +34,15 @@ const ShowEntries = () => {
         <button className={styles.white_btn} onClick={handleLogout}>
         Wyloguj się
         </button></nav>
-        <table>
+        <table className={styles.table}>
             <thead>
                 <tr>
                     <th>Imię</th>
                     <th>Drugie imię</th>
                     <th>Nazwisko</th>
                     <th>Wykroczenie</th>
+                    <th>Edycja</th>
+                    <th>Usuwanie</th>
                 </tr>
             </thead>
             {foundEntries && 

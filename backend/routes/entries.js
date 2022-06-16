@@ -21,6 +21,9 @@ router.post("/", async (req, res)=>{
         res.status(500).send({message: "Wewnętrzny błąd serwera"})
     }
 })
+router.get("/:id", async (req, res) => {
+    await Entry.find({_id: req.params.id}).then(entrys => res.json(entrys)).catch(err => res.status(400).json('Błąd: ' + err));
+   })
 router.get("/", async (req, res) => {
     await Entry.find().then(entrys => res.json(entrys)).catch(err => res.status(400).json('Błąd: ' + err));
    })
@@ -38,7 +41,7 @@ router.post("/update/:id", async(req,res)=>{
             entry.surname = req.body.surname
             entry.offense = req.body.offense
             
-            await entry.save().then(()=> res.status(202).send({message:"Uaktualniono wpis o podanym id"}))
+            await entry.save().then(()=> res.status(202).send({message:"Uaktualniono wpis"}))
             }
             else{
                 res.status(410).send({message:"Nie ma takiego przewinienia"})
@@ -53,7 +56,7 @@ router.post("/update/:id", async(req,res)=>{
         }
 })
 router.delete("/:id", async (req, res)=>{
-    await Entry.findOneAndDelete({_id: req.params.id}).then(()=>res.status(203).send({message:"Usunięto wpis o podanym id"}))
+    await Entry.findOneAndDelete({_id: req.params.id}).then(()=>res.status(203).send({message:"Usunięto wpis"}))
     .catch(() => {res.status(500).send({message: "Wewnętrzny błąd serwera"})})
 })
 router.delete("/deletewithoffense/:name", async (req, res)=>{

@@ -25,6 +25,11 @@ Wyloguj się
     Lista wpisów
 </button>
 </Link>
+<Link to="/enumeratedList">
+<button className={styles.green_btn}>
+    Lista z podziałem
+</button>
+</Link>
 </div>
 )
 }

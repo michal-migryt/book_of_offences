@@ -1,30 +1,51 @@
 import { useState, useRef } from "react"
 import axios from "axios"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import styles from "./styles.module.css"
 import arrow_back from "../../images/back-button.png"
+import { useEffect } from "react"
 const handleLogout = () => {
     localStorage.removeItem("token")
     window.location.href = "/"
 }
-const AddEntry = () => {
-    const [data, setData] = useState({
+const EditEntry = () => {
+    /*const [data, setData] = useState({
         firstName: "",
         secondName: "",
         surname: "",
         offense: "",
     })
+    */
+    const [data, setData] = useState()
+    const [backupData, setBackupData] = useState()
+    const { id } = useParams("")
+    console.log(id);
     const [offensesNames, setOffensesNames] = useState({ name: "" })
+    const [foundEntry, setFoundEntry] = useState(false)
     const [foundNames, setFoundNames] = useState(false)
-
-    if (!foundNames) {
-        axios.get("http://localhost:8080/api/offenses/names").then((response) => {
+    const offenseRef = useRef("Kradzież")
+    const getNames = async () =>{
+        await axios.get("http://localhost:8080/api/offenses/names").then((response) => {
             setOffensesNames(response.data)
             setFoundNames(true)
             //console.log(offensesNames)
         })
     }
-
+    //const offenseRef = useRef("Kradzież")
+    const getEntry = async () =>{
+        await axios.get("http://localhost:8080/api/entries/" + id).then((response) => {
+            setData(response.data[0])
+            setBackupData(response.data[0])
+            setFoundEntry(true)
+        })
+    }
+    if (!foundNames) { 
+    getNames();
+    }
+    if(!foundEntry){
+        getEntry();
+    }
+    
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const navigate = useNavigate()
@@ -35,9 +56,14 @@ const AddEntry = () => {
         e.preventDefault()
         try {
 
-            const url = "http://localhost:8080/api/entries"
-            const { data: res } = await axios.post(url, data)
-
+            const url = "http://localhost:8080/api/entries/update/" + id
+            const dbobj = {
+                firstName: data.firstName,
+                secondName: data.secondName,
+                surname: data.surname,
+                offense: data.offense
+            }
+            const { data: res } = await axios.post(url, dbobj)
             setSuccess(res.message)
             setError("")
         } catch (error) {
@@ -51,8 +77,12 @@ const AddEntry = () => {
             }
         }
     }
-    const offenseRef = useRef(offensesNames[0])
-    return (foundNames &&
+    const cancelEdited = (e) => {
+        e.preventDefault()
+        setData(backupData)
+    }
+    
+    return (foundNames &&  foundEntry && 
         <div className={styles.main_container}>
             <nav className={styles.navbar}>
                 <button className={styles.back_btn}>
@@ -108,7 +138,7 @@ const AddEntry = () => {
                     <label>
 
                         Rodzaj przewinienia:
-                        <select ref={offenseRef} className={styles.select} onChange={() => { console.log(offenseRef.current.value) }}>
+                        <select ref={offenseRef} value={data.offense} className={styles.select} onChange={(e) => { setData({ ...data, ["offense"]: e.target.value }) }}>
                             {offensesNames.map((v, i) => {
                                 return <option>{v["name"]}</option>
                             })}
@@ -120,12 +150,14 @@ const AddEntry = () => {
                     className={styles.error_msg}>{error}</div>}
                 {success && <div
                     className={styles.success}>{success}</div>}
-                <button type="submit"
-                    className={styles.green_btn} onClick={() => { setData({ ...data, ["offense"]: offenseRef.current.value }) }}>
-                    Dodaj wpis
+                    <div>
+                <button type="submit" onClick={console.log(data)}
+                    className={styles.green_btn}>
+                    Edytuj wpis
                 </button>
+                    <button className={styles.green_btn} onClick={cancelEdited} > Cofnij zmiany</button></div>
             </form>
         </div>
     );
 };
-export default AddEntry
+export default EditEntry

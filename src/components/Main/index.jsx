@@ -9,6 +9,7 @@ window.location.reload()
 return (
 <div className={styles.main_container}>
 <nav className={styles.navbar}>
+    <h1></h1>
 <h1>Kartoteka kryminalno-wykroczeniowa</h1>
 <button className={styles.white_btn} onClick={handleLogout}>
 Wyloguj się
